@@ -1,0 +1,87 @@
+﻿@page "/Edit/{Id:int}"
+
+@using Assignment1.Data
+@using Models
+@inject IAdultData AdultData
+@inject NavigationManager NavMgr
+@attribute [Authorize(Policy = "MustLogIn")]
+
+<h3>Edit person with id: @Id</h3>
+
+@if (adultToEdit == null)
+{
+    <em>Todo not found!</em>
+}
+else
+{
+    <EditForm Model="@adultToEdit" OnValidSubmit="@save">
+        <DataAnnotationsValidator/>
+        <ValidationSummary/>
+        <div class="form-group">
+                First Name: <br/>
+                <InputTextArea rows="1" @bind-Value="adultToEdit.FirstName"/>
+            </div>
+            <div class="form-group">
+                Last Name: <br/>
+                <InputTextArea rows="1" @bind-Value="adultToEdit.LastName"/>
+            </div>
+            <div class="form-group">
+                Job Title: <br/>
+                <InputTextArea rows="1" @bind-Value="adultToEdit.JobTitle.JobTitle"/>
+            </div>
+            <div class="form-group">
+                Hair Color: <br/>
+                <InputTextArea rows="1" @bind-Value="adultToEdit.HairColor"/>
+            </div>
+            <div class="form-group">
+                Eye Color: <br/>
+                <InputTextArea rows="1" @bind-Value="adultToEdit.EyeColor"/>
+            </div>
+            <div class="form-group">
+                Salary: <br/>
+                <InputNumber rows="1" @bind-Value="adultToEdit.JobTitle.Salary"/>
+            </div>
+            <div class="form-group">
+                Age: <br/>
+                <InputNumber rows="1" @bind-Value="adultToEdit.Age"/>
+            </div>
+            <div class="form-group">
+                Weight: <br/>
+                <InputNumber rows="1" @bind-Value="adultToEdit.Weight"/>
+            </div>
+            <div class="form-group">
+                Height: <br/>
+                <InputNumber rows="1" @bind-Value="adultToEdit.Height"/>
+            </div>
+            <div class="form-group">
+                Sex: <br/>
+                <InputSelect @bind-Value="adultToEdit.Sex">
+                    <option value="">Select</option>
+                    <option value="M">Male</option>
+                    <option value="F">Female</option>
+                </InputSelect>
+            </div>
+        <p class="actions">
+            <button class="btn btn-outline-dark" type="submit">Save</button>
+        </p>
+    </EditForm>
+}
+
+@code{
+
+    [Parameter]
+    public int Id { get; set; }
+
+    private Adult adultToEdit;
+
+    protected override async Task OnInitializedAsync()
+    {
+        adultToEdit = AdultData.get(Id);
+    }
+
+    private void save()
+    {
+        AdultData.Update(adultToEdit);
+        NavMgr.NavigateTo("/Adults");
+    }
+}

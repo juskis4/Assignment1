@@ -1,0 +1,54 @@
+﻿@page "/More/{Id:int}"
+@using Assignment1.Data
+@using Models
+@inject IAdultData AdultData;
+@inject NavigationManager NavMgr
+
+<h1>@Adult.FirstName @Adult.LastName</h1>
+
+@if (Adult == null)
+{
+    <em>The person is not found!</em>
+}
+else
+{
+    <p>ID: @Adult.Id</p>
+    <p>Hair Color: @Adult.HairColor</p>
+    <p>Eye Color: @Adult.EyeColor</p>
+    <p>Age: @Adult.Age</p>
+    <p>Weight: @Adult.Weight kg</p>
+    <p>Height: @Adult.Height cm</p>
+    @if (Adult.Sex.Equals("M"))
+    {
+        <p>Sex: Male</p>
+    }
+    else
+    {
+        <p>Sex: Female</p>
+    }
+    <p>Job Title: @Adult.JobTitle.JobTitle</p>
+    <p>Salary: @Adult.JobTitle.Salary Eur</p>
+    <p>
+        <button class="btn-outline-dark" @onclick="@(() => goToAdults())">Go Back</button>
+    </p>
+}
+
+@code {
+
+    [Parameter]
+    public int Id { get; set; }
+
+    private Adult Adult;
+
+    //Fetching adult
+    protected override async Task OnInitializedAsync()
+    {
+        Adult = AdultData.get(Id);
+    }
+
+    private void goToAdults()
+    {
+        NavMgr.NavigateTo("/Adults");
+    }
+
+}

@@ -1,0 +1,122 @@
+﻿@page "/Adults"
+@using Models
+@using Assignment1.Data
+@inject IAdultData AdultData
+@inject NavigationManager NavMgr
+
+<h3>Adults</h3>
+
+<p>
+    Filter By First Name: <input type="search" @oninput="@((arg) => FilterByName(arg))"/>
+</p>
+
+@if (adultsToShow == null)
+{
+    <p>
+        <em>Loading...</em>
+    </p>
+}
+else if (!adultsToShow.Any())
+{
+    <p>
+        <em>No Adult items exist</em>
+    </p>
+}
+else
+{
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Person ID</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Age</th>
+            <th>Sex</th>
+            <th>More</th>
+            <th>Edit</th>
+            <AuthorizeView Policy="MustLogIn">
+            <th>Delete</th>
+            </AuthorizeView>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var item in adultsToShow)
+        {
+            <tr>
+                <td>@item.Id</td>
+                <td>@item.FirstName</td>
+                <td>@item.LastName</td>
+                <td>@item.Age</td>
+                <td>@item.Sex</td>
+                <td>
+                    <button @onclick="@(() => More(item.Id))">
+                        <i class="oi oi-arrow-thick-right"/>
+                    </button>
+                </td>
+                <td>
+                    <button @onclick="@(() => Edit(item.Id))">
+                        <i class="oi oi-pencil" style="color:#1b6ec2"/>
+                    </button>
+                </td>
+                <td>
+                    <AuthorizeView Policy="MustLogIn">
+                        <button @onclick="@(() => Remove(item.Id))">
+                            <i class="oi oi-trash" style="color:red"/>
+                        </button>
+                    </AuthorizeView>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+@code {
+    private IList<Adult> AllAdults;
+    private IList<Adult> adultsToShow;
+
+    private string? filterByName;
+
+    protected override async Task OnInitializedAsync()
+    {
+        AllAdults = AdultData.GetAdults();
+        adultsToShow = AllAdults;
+    }
+
+    private void More(int id)
+    {
+        NavMgr.NavigateTo($"More/{id}");
+    }
+
+    private void Remove(int id)
+    {
+        Adult adultToRemove = AllAdults.First(t => t.Id == id);
+        AdultData.removeAdult(id);
+        AllAdults.Remove(adultToRemove);
+        adultsToShow.Remove(adultToRemove);
+    }
+
+    private void FilterByName(ChangeEventArgs changeEventArgs)
+    {
+        filterByName = null;
+        try
+        {
+            filterByName = changeEventArgs.Value.ToString();
+        }
+        catch (Exception e)
+        {
+        }
+        ExecuteFilter();
+    }
+
+    private void Edit(int id)
+    {
+        NavMgr.NavigateTo($"Edit/{id}");
+    }
+
+    private void ExecuteFilter()
+    {
+        adultsToShow = AllAdults.Where(t => (filterByName != null && t.FirstName == filterByName || filterByName == null)).ToList();
+    }
+
+}
