@@ -15,3 +15,6 @@ A website made with .Net Blazor framework for storing people. All the data was s
 
 ## What did I learned?
 Mainly I learned how to use Blazor for creating websites quickly. Also learned how to implement authentification and broaden my knowledge of JSON usage.
+
+## Short video demonstration
+https://www.youtube.com/watch?v=HdLWav5ERbM
